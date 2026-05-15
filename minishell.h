@@ -13,9 +13,9 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft/libft.h"
+# include "42_libft/libft.h"
 # include "structs.h"
-# include "get_next_lien/get_next_line_bonus.h"
+# include "42_gnl/get_next_line_bonus.h"
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>

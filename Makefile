@@ -1,34 +1,35 @@
-CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -I. -Ilibft
-RM			= rm -f
+CC          = cc
+CFLAGS      = -Wall -Wextra -Werror -I. -I42_libft -I42_gnl
+RM          = rm -f
 
-NAME		= minishell
+NAME        = minishell
 
-GNL_SRC		= get_next_lien/get_next_line_bonus.c \
-			  get_next_lien/get_next_line_utils_bonus.c
+GNL_SRC     = 42_gnl/get_next_line_bonus.c \
+              42_gnl/get_next_line_utils_bonus.c
 
-PARSING_SRC	= parsing/cmd_builder.c \
-			  parsing/env_init.c \
-			  parsing/exec_mock.c \
-			  parsing/expander.c \
-			  parsing/free.c \
-			  parsing/lexer_utils.c \
-			  parsing/lexer.c \
-			  parsing/main.c \
-			  parsing/parse_core.c \
-			  parsing/syntax_check.c \
-			  parsing/redirections.c \
+PARSING_SRC = parsing/cmd_builder.c \
+              parsing/env_init.c \
+              parsing/exec_mock.c \
+              parsing/expander.c \
+              parsing/free.c \
+              parsing/lexer_utils.c \
+              parsing/lexer.c \
+              parsing/main.c \
+              parsing/parse_core.c \
+              parsing/syntax_check.c \
+              parsing/redirections.c
 
-SRCS		= $(PARSING_SRC) $(GNL_SRC)
+SRCS        = $(PARSING_SRC) $(GNL_SRC)
 
-OBJS		= $(SRCS:.c=.o)
+OBJS        = $(SRCS:.c=.o)
 
-LIBFT_A		= libft/libft.a
+LIBFT_DIR   = 42_libft
+LIBFT_A     = $(LIBFT_DIR)/libft.a
 
 all: $(NAME)
 
 $(LIBFT_A):
-	make -C libft bonus
+	make -C $(LIBFT_DIR) bonus
 
 $(NAME): $(OBJS) $(LIBFT_A)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -lreadline -o $(NAME)
@@ -37,11 +38,11 @@ $(NAME): $(OBJS) $(LIBFT_A)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	make -C libft clean
+	make -C $(LIBFT_DIR) clean
 	$(RM) $(OBJS)
 
 fclean: clean
-	make -C libft fclean
+	make -C $(LIBFT_DIR) fclean
 	$(RM) $(NAME)
 
 re: fclean all
