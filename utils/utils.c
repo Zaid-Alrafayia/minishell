@@ -1,41 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zaalrafa </var/spool/mail/zaalrafa>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/28 22:09:29 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/10 13:29:04 by zaalrafa         ###   ########.fr       */
+/*   Created: 2026/05/10 13:52:32 by zaalrafa          #+#    #+#             */
+/*   Updated: 2026/05/10 19:26:58 by zaalrafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <unistd.h>
 
-void	child_process(t_shell *shell, t_cmd *cmd)
+void	error_message(char *str, int errno)
 {
-	char	*cmd_pt;
-
-	cmd_pt = cmd_path(shell, cmd->args[0]);
-	execve(cmd_pt, cmd->args, shell->env_array);
-	exit(1);
+	printf("%s\n", str);
+	exit(errno);
 }
 
-void	exec_external(t_shell *shell)
+int	count_env(t_env *env)
 {
-	*shell->pids = fork();
-	if (shell->pids == 0)
+	int		count;
+	t_env	*curr;
+
+	count = 0;
+	curr = env;
+	while (curr)
 	{
+		count++;
+		curr = curr->next;
 	}
-}
-
-void	exec(t_shell *shell)
-{
-	if (check_built_in(shell))
-		built_in(shell);
-	else if (shell->current_cmd[0].pipe)
-		exec_pipe(shell);
-	else
-		exec_external(shell);
+	return (count);
 }
