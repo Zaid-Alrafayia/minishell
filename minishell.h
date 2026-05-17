@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/29 15:36:41 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/12 11:34:30 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/17 12:03:11 by zaalrafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,11 @@
 
 # include "42_libft/libft.h"
 # include "structs.h"
-# include "42_gnl/get_next_line_bonus.h"
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
 
 t_token	*create_tok(char *value, t_token_type type, int quote);
 int		add_token(t_token **tokens, t_token *new_node);
@@ -45,6 +44,8 @@ int		count_env(t_env *env);
 void	free_env_node(t_env *tmp);
 
 //------------execution----------//
+int		check_built_in(t_cmd *cmd);
+void	built_in(t_cmd *cmd);
 char	*cmd_path(t_shell *shell, char *cmd);
 char	*check_path(t_shell *shell, char *cmd);
 char	**rebuild_env(t_shell *shell);
@@ -58,6 +59,7 @@ void	ft_export(t_shell *shell, t_cmd *cmd);
 void	ft_exit(t_shell *shell);
 void	ft_pwd(void);
 void	ft_cd(t_cmd *cmd);
+void	ft_echo(t_cmd *cmd);
 
 //------------parsing------------//
 #endif

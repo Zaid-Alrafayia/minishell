@@ -19,7 +19,7 @@ void	built_in(t_cmd *cmd)
 	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
 		ft_cd(cmd);
 	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
-		ft_pwd(cmd->shell);
+		ft_pwd();
 	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
 		ft_export(cmd->shell, cmd);
 	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
@@ -27,10 +27,10 @@ void	built_in(t_cmd *cmd)
 	else if (ft_strncmp(cmd[0].args[0], "env", 4) == 0)
 		ft_env(cmd->shell);
 	else if (ft_strncmp(cmd[0].args[0], "exit", 5) == 0)
-		ft_exit();
+		ft_exit(cmd->shell);
 }
 
-static int	check_built_in(t_cmd *cmd)
+int	check_built_in(t_cmd *cmd)
 {
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (1);

@@ -4,8 +4,6 @@ RM          = rm -f
 
 NAME        = minishell
 
-GNL_SRC     = 42_gnl/get_next_line_bonus.c \
-              42_gnl/get_next_line_utils_bonus.c
 
 PARSING_SRC = parsing/cmd_builder.c \
               parsing/env_init.c \
@@ -19,7 +17,14 @@ PARSING_SRC = parsing/cmd_builder.c \
               parsing/syntax_check.c \
               parsing/redirections.c
 
-SRCS        = $(PARSING_SRC) $(GNL_SRC)
+EXECUTION_SRC = execution/builtin.c \
+                execution/builtin2.c \
+                execution/builtin_checkers.c \
+                execution/env.c \
+                execution/exec.c \
+                execution/path.c
+
+SRCS        = $(PARSING_SRC) $(EXECUTION_SRC)
 
 OBJS        = $(SRCS:.c=.o)
 

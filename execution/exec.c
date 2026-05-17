@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: zaalrafa </var/spool/mail/zaalrafa>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 22:09:29 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/10 13:29:04 by zaalrafa         ###   ########.fr       */
+/*   Updated: 2026/05/17 12:03:47 by zaalrafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <unistd.h>
 
 void	child_process(t_shell *shell, t_cmd *cmd)
 {
@@ -32,8 +31,8 @@ void	exec_external(t_shell *shell)
 
 void	exec(t_shell *shell)
 {
-	if (check_built_in(shell))
-		built_in(shell);
+	if (check_built_in(shell->current_cmd))
+		built_in(shell->current_cmd);
 	else if (shell->current_cmd[0].pipe)
 		exec_pipe(shell);
 	else

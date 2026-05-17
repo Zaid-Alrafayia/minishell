@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
+#include <stdbool.h>
 
 void	ft_unset(t_shell *shell, t_cmd *cmd)
 {
