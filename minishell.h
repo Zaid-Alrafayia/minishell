@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/15 22:38:19 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:56:38 by mohammad-he      ###   ########.fr       */
+/*   Created: 2026/05/19 10:15:06 by mohammad-he       #+#    #+#             */
+/*   Updated: 2026/05/19 10:16:18 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "42_libft/libft.h"
 # include "structs.h"
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -52,4 +53,29 @@ void	exec_signals(void);
 
 void	execute_commands(t_shell *shell);
 
+//------------utils--------------//
+void	free_arr(char **arr);
+void	error_message(char *str, int errno);
+int		count_env(t_env *env);
+void	free_env_node(t_env *tmp);
+
+//------------execution----------//
+int		check_built_in(t_cmd *cmd);
+void	built_in(t_cmd *cmd);
+char	*cmd_path(t_shell *shell, char *cmd);
+char	*check_path(t_shell *shell, char *cmd);
+char	**rebuild_env(t_shell *shell);
+bool	change_env_value(t_env *env, char *key, char *value);
+char	*get_env_value(t_env *env, char *key);
+t_env	*get_env_by_key(t_env *env, char *key);
+//--builtin--//
+void	ft_env(t_shell *shell);
+void	ft_unset(t_shell *shell, t_cmd *cmd);
+void	ft_export(t_shell *shell, t_cmd *cmd);
+void	ft_exit(t_shell *shell);
+void	ft_pwd(void);
+void	ft_cd(t_cmd *cmd);
+void	ft_echo(t_cmd *cmd);
+
+//------------parsing------------//
 #endif

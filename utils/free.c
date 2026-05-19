@@ -1,40 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zaalrafa </var/spool/mail/zaalrafa>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/28 22:09:29 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/17 12:03:47 by zaalrafa         ###   ########.fr       */
+/*   Created: 2026/05/10 10:33:53 by zaalrafa          #+#    #+#             */
+/*   Updated: 2026/05/11 00:03:57 by zaalrafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	child_process(t_shell *shell, t_cmd *cmd)
+void	free_arr(char **arr)
 {
-	char	*cmd_pt;
+	int	i;
 
-	cmd_pt = cmd_path(shell, cmd->args[0]);
-	execve(cmd_pt, cmd->args, shell->env_array);
-	exit(1);
-}
-
-void	exec_external(t_shell *shell)
-{
-	*shell->pids = fork();
-	if (shell->pids == 0)
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
 	{
+		free(arr[i]);
+		i++;
 	}
+	free(arr);
 }
 
-void	exec(t_shell *shell)
+void	free_env_node(t_env *tmp)
 {
-	if (check_built_in(shell->current_cmd))
-		built_in(shell->current_cmd);
-	else if (shell->current_cmd[0].pipe)
-		exec_pipe(shell);
-	else
-		exec_external(shell);
+	tmp->next = NULL;
+	free(tmp->key);
+	free(tmp->value);
+	free(tmp);
 }

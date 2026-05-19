@@ -19,7 +19,14 @@ PARSING_SRC = parsing/lexer_utils.c \
               parsing/signals.c \
               parsing/main.c
 
-SRCS        = $(PARSING_SRC)
+EXECUTION_SRC = execution/builtin.c \
+                execution/builtin2.c \
+                execution/builtin_checkers.c \
+                execution/env.c \
+                execution/exec.c \
+                execution/path.c
+
+SRCS        = $(PARSING_SRC) $(EXECUTION_SRC)
 
 OBJS        = $(SRCS:.c=.o)
 
