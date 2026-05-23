@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 10:15:06 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/19 11:01:56 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 09:35:54 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 # include <signal.h>
 # include <sys/wait.h>
 
+extern int	g_sig_status;
+
 //------------utils--------------//
 void	free_arr(char **arr);
 void	error_message(char *str, int errno);
@@ -34,6 +36,11 @@ void	free_env_node(t_env *tmp);
 //------------execution----------//
 int		check_built_in(t_cmd *cmd);
 void	built_in(t_cmd *cmd);
+int		apply_redirs(t_cmd *cmd);
+void	close_cmd_fds(t_cmd *cmd);
+void	restore_stdio(t_shell *shell);
+void	update_env_array(t_shell *shell);
+void	set_exit_status(t_shell *shell, int status);
 char	*cmd_path(t_shell *shell, char *cmd);
 char	*check_path(t_shell *shell, char *cmd);
 char	**rebuild_env(t_shell *shell);
@@ -44,6 +51,8 @@ void	child_process(t_shell *shell, t_cmd *cmd);
 void	exec_external(t_shell *shell);
 void	exec_pipe(t_shell *shell);
 void	exec(t_shell *shell);
+void	exec_single_builtin(t_shell *shell, t_cmd *cmd);
+void	exec_empty_cmd(t_shell *shell, t_cmd *cmd);
 
 //--builtin--//
 void	ft_env(t_shell *shell);
@@ -81,6 +90,7 @@ void	free_cycle(t_shell *shell);
 void	free_shell(t_shell *shell);
 
 void	init_signals(void);
+void	ignore_signals(void);
 void	exec_signals(void);
 
 void	execute_commands(t_shell *shell);

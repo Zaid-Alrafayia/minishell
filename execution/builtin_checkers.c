@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_checkers.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zaalrafa </var/spool/mail/zaalrafa>        +#+  +:+       +#+        */
+/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/10 13:27:40 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/10 19:39:22 by zaalrafa         ###   ########.fr       */
+/*   Updated: 2026/05/23 09:02:24 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ void	built_in(t_cmd *cmd)
 		ft_export(cmd->shell, cmd);
 	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
 		ft_unset(cmd->shell, cmd);
-	else if (ft_strncmp(cmd[0].args[0], "env", 4) == 0)
+	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		ft_env(cmd->shell);
-	else if (ft_strncmp(cmd[0].args[0], "exit", 5) == 0)
+	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		ft_exit(cmd->shell);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zaalrafa </var/spool/mail/zaalrafa>        +#+  +:+       +#+        */
+/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/10 13:52:32 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/10 19:26:58 by zaalrafa         ###   ########.fr       */
+/*   Updated: 2026/05/23 09:06:43 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	error_message(char *str, int errno)
 {
-	printf("%s\n", str);
+	ft_putendl_fd(str, 2);
 	exit(errno);
 }
 

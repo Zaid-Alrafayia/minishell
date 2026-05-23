@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:48:36 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:48:37 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 09:24:53 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ t_cmd	*create_cmd_node(void)
 	node->infile = STDIN_FILENO;
 	node->outfile = STDOUT_FILENO;
 	node->append = false;
+	node->pipe = false;
 	node->limiter = NULL;
 	node->next = NULL;
 	return (node);
@@ -53,7 +54,10 @@ static int	count_args(t_token *tok)
 	while (tok && tok->type != PIPE)
 	{
 		if (tok->type == CMD)
-			i++;
+		{
+			if (tok->value[0] != '\0' || tok->quote_type != 0)
+				i++;
+		}
 		else if (tok->type != PIPE)
 			tok = tok->next;
 		if (tok)
@@ -76,7 +80,8 @@ static void	fill_args(t_cmd *cmd, t_token **tok)
 	{
 		if ((*tok)->type == CMD)
 		{
-			cmd->args[i++] = ft_strdup((*tok)->value);
+			if ((*tok)->value[0] != '\0' || (*tok)->quote_type != 0)
+				cmd->args[i++] = ft_strdup((*tok)->value);
 			*tok = (*tok)->next;
 		}
 		else
@@ -99,7 +104,10 @@ t_cmd	*build_cmd_table(t_token *tokens)
 		fill_args(curr, &tok);
 		add_cmd(&head, curr);
 		if (tok && tok->type == PIPE)
+		{
+			curr->pipe = true;
 			tok = tok->next;
+		}
 	}
 	return (head);
 }

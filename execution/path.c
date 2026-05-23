@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zaalrafa </var/spool/mail/zaalrafa>        +#+  +:+       +#+        */
+/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/10 10:26:14 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/10 10:36:48 by zaalrafa         ###   ########.fr       */
+/*   Updated: 2026/05/23 09:12:07 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,10 @@ char	*check_path(t_shell *shell, char *cmd)
 	}
 	search_path = search_func(search_path, arr, cmd);
 	if (search_path)
+	{
+		free_arr(arr);
 		return (search_path);
+	}
 	free_arr(arr);
 	return (NULL);
 }
@@ -97,7 +100,7 @@ char	*cmd_path(t_shell *shell, char *cmd)
 	{
 		if (access(cmd, F_OK | X_OK) == -1)
 			return (NULL);
-		path = cmd;
+		path = ft_strdup(cmd);
 	}
 	else
 		path = check_path(shell, cmd);

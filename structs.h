@@ -6,12 +6,11 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 10:13:07 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/19 10:14:28 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/19 11:32:27 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h>
-#include <unistd.h>
 
 typedef struct s_shell	t_shell;
 typedef enum e_token_type

@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 12:02:07 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/19 10:43:54 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 09:06:43 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ void	ft_echo(t_cmd *cmd)
 	}
 	while (cmd->args[i])
 	{
-		printf("%s", cmd->args[i]);
+		ft_putstr_fd(cmd->args[i], 1);
 		if (cmd->args[i + 1])
-			printf(" ");
+			write(1, " ", 1);
 		i++;
 	}
 	if (!n_flag)
-		printf("\n");
+		write(1, "\n", 1);
 }

@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:50:33 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:50:34 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 09:12:07 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,13 @@ void	init_signals(void);
 void	init_shell(t_shell *shell, char **envp)
 {
 	shell->env = init_env(envp);
-	shell->env_array = envp;
+	shell->env_array = rebuild_env(shell);
 	shell->history = NULL;
 	shell->pids = NULL;
 	shell->tokens = NULL;
 	shell->current_cmd = NULL;
 	shell->exit_status = 0;
+	shell->env_edited = false;
 	shell->stdin_backup = dup(STDIN_FILENO);
 	shell->stdout_backup = dup(STDOUT_FILENO);
 }
@@ -41,8 +42,11 @@ void	free_shell(t_shell *shell)
 		free(shell->env);
 		shell->env = tmp;
 	}
+	if (shell->env_array)
+		free_arr(shell->env_array);
 	close(shell->stdin_backup);
 	close(shell->stdout_backup);
+	rl_clear_history();
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -62,7 +66,7 @@ int	main(int argc, char **argv, char **envp)
 		if (*input)
 			add_history(input);
 		if (parse_input(&shell, input))
-			execute_commands(&shell);
+			exec(&shell);
 		free_cycle(&shell);
 		free(input);
 	}

@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:52:13 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:56:01 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 09:31:28 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,29 +29,43 @@ static char	*extract_var(char *str, int *i, t_shell *shell)
 	return (val);
 }
 
-static char	*process_str(char *str, t_shell *shell)
+static void	handle_quotes(char c, int *state, t_token *tok)
+{
+	if (c == '\'' && *state != 2)
+	{
+		*state = 1 - *state;
+		tok->quote_type = 1;
+	}
+	else if (c == '\"' && *state != 1)
+	{
+		*state = 2 - *state;
+		tok->quote_type = 1;
+	}
+}
+
+static char	*process_str(t_token *tok, t_shell *shell)
 {
 	char	*res;
-	char	tmp[2];
+	char	t[2];
 	int		i;
-	int		state;
+	int		st;
 
 	res = ft_strdup("");
 	i = -1;
-	state = 0;
-	tmp[1] = '\0';
-	while (str[++i])
+	st = 0;
+	tok->quote_type = 0;
+	t[1] = '\0';
+	while (tok->value[++i])
 	{
-		if (str[i] == '\'' && state != 2)
-			state = 1 - state;
-		else if (str[i] == '\"' && state != 1)
-			state = 2 - state;
-		else if (str[i] == '$' && state != 1)
-			res = join_and_free(res, extract_var(str, &i, shell));
+		if ((tok->value[i] == '\'' && st != 2)
+			|| (tok->value[i] == '\"' && st != 1))
+			handle_quotes(tok->value[i], &st, tok);
+		else if (tok->value[i] == '$' && st != 1)
+			res = join_and_free(res, extract_var(tok->value, &i, shell));
 		else
 		{
-			tmp[0] = str[i];
-			res = join_and_free(res, ft_strdup(tmp));
+			t[0] = tok->value[i];
+			res = join_and_free(res, ft_strdup(t));
 		}
 	}
 	return (res);
@@ -67,7 +81,7 @@ void	expand_tokens(t_shell *shell)
 	{
 		if (tok->type == CMD)
 		{
-			new_val = process_str(tok->value, shell);
+			new_val = process_str(tok, shell);
 			free(tok->value);
 			tok->value = new_val;
 		}

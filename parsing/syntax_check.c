@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:49:13 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:49:14 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 09:32:51 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,20 @@ static bool	check_redir_syntax(t_token *tokens)
 	{
 		if (is_redirection(curr->type))
 		{
-			if (!curr->next || is_redirection(curr->next->type)
-				|| curr->next->type == PIPE)
+			if (!curr->next)
+			{
+				ft_putendl_fd("minishell: syntax error near unexpected token"
+					" `newline'", 2);
 				return (false);
+			}
+			if (is_redirection(curr->next->type) || curr->next->type == PIPE)
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `",
+					2);
+				ft_putstr_fd(curr->next->value, 2);
+				ft_putendl_fd("'", 2);
+				return (false);
+			}
 		}
 		curr = curr->next;
 	}
@@ -63,12 +74,11 @@ bool	check_syntax(t_token *tokens)
 		return (false);
 	if (!check_pipe_syntax(tokens))
 	{
-		printf("minishell: syntax error near unexpected token `|'\n");
+		ft_putendl_fd("minishell: syntax error near unexpected token `|'", 2);
 		return (false);
 	}
 	if (!check_redir_syntax(tokens))
 	{
-		printf("minishell: syntax error near unexpected token `newline'\n");
 		return (false);
 	}
 	return (true);
