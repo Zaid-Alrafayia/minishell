@@ -3,35 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 00:09:00 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/06/01 22:28:00 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 11:57:41 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-static void	print_export(t_shell *shell)
-{
-	t_env	*curr;
-
-	curr = shell->env;
-	while (curr)
-	{
-		ft_putstr_fd("declare -x ", 1);
-		ft_putstr_fd(curr->key, 1);
-		if (curr->value)
-		{
-			ft_putstr_fd("=\"", 1);
-			ft_putstr_fd(curr->value, 1);
-			ft_putendl_fd("\"", 1);
-		}
-		else
-			ft_putendl_fd("", 1);
-		curr = curr->next;
-	}
-}
 
 static int	export_invalid(t_cmd *cmd, int i, char *id_end)
 {
@@ -54,7 +33,7 @@ static void	export_one(t_shell *shell, char *arg)
 	if (!eq)
 	{
 		if (!get_env_by_key(shell->env, arg))
-			add_env_back(shell->env,
+			add_env_back(&shell->env,
 				make_env_node(ft_strdup(arg), NULL));
 		return ;
 	}
@@ -67,7 +46,7 @@ static void	export_one(t_shell *shell, char *arg)
 		free(key);
 	}
 	else
-		add_env_back(shell->env, make_env_node(key, ft_strdup(eq + 1)));
+		add_env_back(&shell->env, make_env_node(key, ft_strdup(eq + 1)));
 	shell->env_edited = true;
 }
 

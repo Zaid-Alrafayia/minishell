@@ -18,7 +18,7 @@ static char	*get_env_str(char *key, char *value)
 	char	*res;
 
 	if (!value)
-		value = "";
+		return (NULL);
 	tmp = ft_strjoin(key, "=");
 	if (!tmp)
 		return (NULL);
@@ -40,14 +40,17 @@ char	**rebuild_env(t_shell *shell)
 	i = 0;
 	while (curr)
 	{
-		array[i] = get_env_str(curr->key, curr->value);
-		if (!array[i])
+		if (curr->value)
 		{
-			free_arr(array);
-			return (NULL);
+			array[i] = get_env_str(curr->key, curr->value);
+			if (!array[i])
+			{
+				free_arr(array);
+				return (NULL);
+			}
+			i++;
 		}
 		curr = curr->next;
-		i++;
 	}
 	array[i] = NULL;
 	return (array);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 10:15:06 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 10:10:43 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 18:33:43 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
-
-extern int	g_sig_status;
+# include <fcntl.h>
+# include <termios.h>
 
 //------------utils--------------//
 void	free_arr(char **arr);
@@ -49,11 +49,12 @@ bool	change_env_value(t_env *env, char *key, char *value);
 char	*get_env_value(t_env *env, char *key);
 t_env	*get_env_by_key(t_env *env, char *key);
 t_env	*make_env_node(char *key, char *value);
-void	add_env_back(t_env *env, t_env *new_node);
+void	add_env_back(t_env **env, t_env *new_node);
 int		is_valid_id(char *s);
 void	child_process(t_shell *shell, t_cmd *cmd);
-void	exec_external(t_shell *shell);
-void	exec_pipe(t_shell *shell);
+void	exec_external(t_shell *shell, t_cmd *cmd);
+t_cmd	*exec_pipe(t_shell *shell, t_cmd *cmd);
+void	finish_pipe(t_shell *shell, int fd_in, pid_t last_pid);
 void	exec_builtin_child(t_shell *shell, t_cmd *cmd);
 void	exec(t_shell *shell);
 void	exec_single_builtin(t_shell *shell, t_cmd *cmd);
@@ -63,8 +64,10 @@ void	exec_empty_cmd(t_shell *shell, t_cmd *cmd);
 void	ft_env(t_shell *shell);
 void	ft_unset(t_shell *shell, t_cmd *cmd);
 void	ft_export(t_shell *shell, t_cmd *cmd);
+void	print_export(t_shell *shell);
 void	ft_exit(t_cmd *cmd);
-void	ft_pwd(void);
+int		is_exit_numeric(char *s);
+void	ft_pwd(t_shell *shell);
 void	ft_cd(t_cmd *cmd);
 void	ft_echo(t_cmd *cmd);
 
@@ -99,6 +102,8 @@ void	free_shell(t_shell *shell);
 void	init_signals(void);
 void	ignore_signals(void);
 void	exec_signals(void);
+
+bool	check_braces(t_token *tokens);
 
 void	execute_commands(t_shell *shell);
 

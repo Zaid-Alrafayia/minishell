@@ -3,62 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_builder.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:48:36 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 10:10:42 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 12:08:36 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-t_cmd	*create_cmd_node(void)
-{
-	t_cmd	*node;
-
-	node = malloc(sizeof(t_cmd));
-	if (!node)
-		return (NULL);
-	node->args = NULL;
-	node->infile = STDIN_FILENO;
-	node->outfile = STDOUT_FILENO;
-	node->append = false;
-	node->pipe = false;
-	node->limiter = NULL;
-	node->next = NULL;
-	return (node);
-}
-
-void	add_cmd(t_cmd **cmds, t_cmd *new_cmd)
-{
-	t_cmd	*temp;
-
-	if (!new_cmd)
-		return ;
-	if (!*cmds)
-	{
-		*cmds = new_cmd;
-		return ;
-	}
-	temp = *cmds;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new_cmd;
-}
 
 static int	count_args(t_token *tok)
 {
 	int	i;
 
 	i = 0;
-	while (tok && tok->type != PIPE)
+	while (tok && tok->type != PIPE && tok->type != AND && tok->type != OR)
 	{
 		if (tok->type == CMD)
 		{
 			if (tok->value[0] != '\0' || tok->quote_type != 0)
 				i++;
 		}
-		else if (tok->type != PIPE)
+		else
 			tok = tok->next;
 		if (tok)
 			tok = tok->next;
@@ -76,7 +42,8 @@ static void	fill_args(t_cmd *cmd, t_token **tok)
 	if (!cmd->args)
 		return ;
 	i = 0;
-	while (*tok && (*tok)->type != PIPE)
+	while (*tok && (*tok)->type != PIPE && (*tok)->type != AND
+		&& (*tok)->type != OR)
 	{
 		if ((*tok)->type == CMD)
 		{
@@ -88,6 +55,25 @@ static void	fill_args(t_cmd *cmd, t_token **tok)
 			handle_redirection(cmd, tok);
 	}
 	cmd->args[i] = NULL;
+}
+
+static void	handle_cmd_operators(t_cmd *curr, t_token **tok)
+{
+	if (*tok && (*tok)->type == PIPE)
+	{
+		curr->pipe = true;
+		*tok = (*tok)->next;
+	}
+	else if (*tok && (*tok)->type == AND)
+	{
+		curr->logical_op = OP_AND;
+		*tok = (*tok)->next;
+	}
+	else if (*tok && (*tok)->type == OR)
+	{
+		curr->logical_op = OP_OR;
+		*tok = (*tok)->next;
+	}
 }
 
 t_cmd	*build_cmd_table(t_token *tokens)
@@ -103,11 +89,7 @@ t_cmd	*build_cmd_table(t_token *tokens)
 		curr = create_cmd_node();
 		fill_args(curr, &tok);
 		add_cmd(&head, curr);
-		if (tok && tok->type == PIPE)
-		{
-			curr->pipe = true;
-			tok = tok->next;
-		}
+		handle_cmd_operators(curr, &tok);
 	}
 	return (head);
 }

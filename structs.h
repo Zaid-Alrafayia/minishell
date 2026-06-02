@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 10:13:07 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/19 11:32:27 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 10:26:50 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,16 @@ typedef enum e_token_type
 	APPEND,
 	HEREDOC,
 	PIPE,
+	AND,
+	OR
 }						t_token_type;
+
+typedef enum e_logical_op
+{
+	OP_NONE,
+	OP_AND,
+	OP_OR
+}						t_logical_op;
 
 typedef struct s_token
 {
@@ -46,6 +55,7 @@ typedef struct s_cmd
 	int					outfile;
 	bool				append;
 	bool				pipe;
+	t_logical_op		logical_op;
 	char				*limiter;
 	struct s_cmd		*next;
 	t_shell				*shell;

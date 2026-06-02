@@ -51,6 +51,10 @@ static int	get_word_len(char *in, int i)
 			q = in[i + len];
 		else if (in[i + len] == q)
 			q = 0;
+		else if (in[i + len] == '\\' && !q && in[i + len + 1])
+		{
+			len++;
+		}
 		len++;
 	}
 	return (len);

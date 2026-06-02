@@ -28,6 +28,26 @@ static int	is_n_flag(char *arg)
 	return (1);
 }
 
+static int	write_echo_arg(t_cmd *cmd, int i)
+{
+	if (write(1, cmd->args[i], ft_strlen(cmd->args[i])) == -1)
+	{
+		perror("minishell: echo: write error");
+		cmd->shell->exit_status = 1;
+		return (0);
+	}
+	if (cmd->args[i + 1])
+	{
+		if (write(1, " ", 1) == -1)
+		{
+			perror("minishell: echo: write error");
+			cmd->shell->exit_status = 1;
+			return (0);
+		}
+	}
+	return (1);
+}
+
 void	ft_echo(t_cmd *cmd)
 {
 	int	i;
@@ -42,11 +62,16 @@ void	ft_echo(t_cmd *cmd)
 	}
 	while (cmd->args[i])
 	{
-		ft_putstr_fd(cmd->args[i], 1);
-		if (cmd->args[i + 1])
-			write(1, " ", 1);
+		if (!write_echo_arg(cmd, i))
+			return ;
 		i++;
 	}
 	if (!n_flag)
-		write(1, "\n", 1);
+	{
+		if (write(1, "\n", 1) == -1)
+		{
+			perror("minishell: echo: write error");
+			cmd->shell->exit_status = 1;
+		}
+	}
 }

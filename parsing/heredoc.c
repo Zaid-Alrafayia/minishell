@@ -12,20 +12,40 @@
 
 #include "../minishell.h"
 
+static void	print_heredoc_eof(char *limiter)
+{
+	ft_putstr_fd("minishell: warning: here-document at line 1 "
+		"delimited by end-of-file (wanted `", 2);
+	ft_putstr_fd(limiter, 2);
+	ft_putendl_fd("')", 2);
+}
+
+static char	*read_line_helper(void)
+{
+	char	*line;
+
+	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)
+		&& isatty(STDERR_FILENO))
+		line = readline("> ");
+	else
+	{
+		line = get_next_line(STDIN_FILENO);
+		if (line && line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
+	}
+	return (line);
+}
+
 static void	read_heredoc_lines(int fd, char *limiter)
 {
 	char	*line;
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)
-			&& isatty(STDERR_FILENO))
-			line = readline("> ");
-		else
-			line = readline(NULL);
+		line = read_line_helper();
 		if (!line)
 		{
-			write(2, "minishell: warning: delimited by EOF\n", 38);
+			print_heredoc_eof(limiter);
 			break ;
 		}
 		if (ft_strncmp(line, limiter, ft_strlen(limiter) + 1) == 0)

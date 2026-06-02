@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:50:33 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 10:31:24 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 18:35:42 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
 void	init_shell(t_shell *shell, char **envp)
 {
@@ -47,27 +47,55 @@ void	free_shell(t_shell *shell)
 	rl_clear_history();
 }
 
-int	main(int argc, char **argv, char **envp)
+static char	*get_input_line(void)
 {
-	t_shell	shell;
 	char	*input;
 
-	(void)argc;
-	(void)argv;
-	init_shell(&shell, envp);
+	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)
+		&& isatty(STDERR_FILENO))
+		input = readline("minishell$ ");
+	else
+	{
+		input = get_next_line(STDIN_FILENO);
+		if (input && input[ft_strlen(input) - 1] == '\n')
+			input[ft_strlen(input) - 1] = '\0';
+	}
+	return (input);
+}
+
+static void	run_shell_loop(t_shell *shell)
+{
+	char	*input;
+
 	while (1)
 	{
 		init_signals();
-		input = readline("minishell$ ");
+		input = get_input_line();
 		if (!input)
 			break ;
 		if (*input)
 			add_history(input);
-		if (parse_input(&shell, input))
-			exec(&shell);
-		free_cycle(&shell);
+		if (parse_input(shell, input))
+			exec(shell);
+		else if (!isatty(STDIN_FILENO) && shell->exit_status == 2)
+		{
+			free_cycle(shell);
+			free(input);
+			break ;
+		}
+		free_cycle(shell);
 		free(input);
 	}
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_shell	shell;
+
+	(void)argc;
+	(void)argv;
+	init_shell(&shell, envp);
+	run_shell_loop(&shell);
 	free_shell(&shell);
 	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
 		write(1, "exit\n", 5);

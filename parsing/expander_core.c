@@ -51,10 +51,32 @@ static void	handle_quotes(char c, int *state, t_token *tok)
 	}
 }
 
+static char	*process_char(t_token *tok, t_shell *sh, int *i, int *st)
+{
+	char	t[2];
+
+	if ((tok->value[*i] == '\'' && *st != 2)
+		|| (tok->value[*i] == '"' && *st != 1))
+	{
+		handle_quotes(tok->value[*i], st, tok);
+		return (NULL);
+	}
+	else if (tok->value[*i] == '$' && *st == 0
+		&& (tok->value[*i + 1] == '\'' || tok->value[*i + 1] == '"'))
+		return (NULL);
+	else if (tok->value[*i] == '$' && *st != 1)
+		return (extract_var(tok->value, i, sh));
+	else if (tok->value[*i] == '\\' && *st == 0 && tok->value[*i + 1])
+		(*i)++;
+	t[0] = tok->value[*i];
+	t[1] = '\0';
+	return (ft_strdup(t));
+}
+
 static char	*process_str(t_token *tok, t_shell *shell)
 {
 	char	*res;
-	char	t[2];
+	char	*part;
 	int		i;
 	int		st;
 
@@ -62,19 +84,11 @@ static char	*process_str(t_token *tok, t_shell *shell)
 	i = 0;
 	st = 0;
 	tok->quote_type = 0;
-	t[1] = '\0';
 	while (tok->value[i])
 	{
-		if ((tok->value[i] == '\'' && st != 2)
-			|| (tok->value[i] == '"' && st != 1))
-			handle_quotes(tok->value[i], &st, tok);
-		else if (tok->value[i] == '$' && st != 1)
-			res = join_and_free(res, extract_var(tok->value, &i, shell));
-		else
-		{
-			t[0] = tok->value[i];
-			res = join_and_free(res, ft_strdup(t));
-		}
+		part = process_char(tok, shell, &i, &st);
+		if (part)
+			res = join_and_free(res, part);
 		i++;
 	}
 	return (res);

@@ -1,38 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   cmd_builder_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/10 13:52:32 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/23 09:06:43 by mohammad-he      ###   ########.fr       */
+/*   Created: 2026/06/02 12:10:00 by mhaizan           #+#    #+#             */
+/*   Updated: 2026/06/02 12:10:00 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	error_message(char *str, int errno)
-{
-	ft_putendl_fd(str, 2);
-	exit(errno);
-}
-
-int	count_env(t_env *env)
-{
-	int		count;
-	t_env	*curr;
-
-	count = 0;
-	curr = env;
-	while (curr)
-	{
-		if (curr->value)
-			count++;
-		curr = curr->next;
-	}
-	return (count);
-}
 
 t_cmd	*create_cmd_node(void)
 {

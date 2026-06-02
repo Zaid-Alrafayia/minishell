@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:51:10 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:51:12 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 10:26:50 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,14 @@ static int	extract_operator(char *in, int i, t_token **toks)
 		return (add_token(toks, create_tok(">>", APPEND, 0)), 2);
 	if (in[i] == '<' && in[i + 1] == '<')
 		return (add_token(toks, create_tok("<<", HEREDOC, 0)), 2);
+	if (in[i] == '|' && in[i + 1] == '|')
+		return (add_token(toks, create_tok("||", OR, 0)), 2);
+	if (in[i] == '&' && in[i + 1] == '&')
+		return (add_token(toks, create_tok("&&", AND, 0)), 2);
+	if (in[i] == '<' && in[i + 1] == '>')
+		return (add_token(toks, create_tok("<>", REDIRECT_IN, 0)), 2);
+	if (in[i] == '>' && in[i + 1] == '|')
+		return (add_token(toks, create_tok(">|", TRUNCATE, 0)), 2);
 	if (in[i] == '>')
 		return (add_token(toks, create_tok(">", TRUNCATE, 0)), 1);
 	if (in[i] == '<')
@@ -45,7 +53,7 @@ static int	get_word_len(char *in, int i)
 	{
 		if (!q && (in[i + len] == ' ' || in[i + len] == '\t'
 				|| in[i + len] == '|' || in[i + len] == '<'
-				|| in[i + len] == '>'))
+				|| in[i + len] == '>' || in[i + len] == '&'))
 			break ;
 		if ((in[i + len] == '\'' || in[i + len] == '\"') && !q)
 			q = in[i + len];

@@ -3,61 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/01 22:27:00 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/06/01 22:27:00 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 12:09:26 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-static int	check_overflow(char *s, int sign)
-{
-	int		len;
-	char	*max;
-
-	while (*s == '0')
-		s++;
-	len = ft_strlen(s);
-	if (len > 19)
-		return (0);
-	if (len < 19)
-		return (1);
-	if (sign == 1)
-		max = "9223372036854775807";
-	else
-		max = "9223372036854775808";
-	if (ft_strncmp(s, max, 19) > 0)
-		return (0);
-	return (1);
-}
-
-static int	is_exit_numeric(char *s)
-{
-	int	i;
-	int	sign;
-
-	i = 0;
-	sign = 1;
-	if (s[i] == '-' || s[i] == '+')
-	{
-		if (s[i] == '-')
-			sign = -1;
-		i++;
-	}
-	if (!s[i])
-		return (0);
-	while (s[i])
-	{
-		if (!ft_isdigit(s[i]))
-			return (0);
-		i++;
-	}
-	if (s[0] == '-' || s[0] == '+')
-		return (check_overflow(s + 1, sign));
-	return (check_overflow(s, sign));
-}
 
 static void	exit_error(t_cmd *cmd, char *arg)
 {
@@ -68,21 +21,30 @@ static void	exit_error(t_cmd *cmd, char *arg)
 	exit(2);
 }
 
+static void	exit_no_args(t_cmd *cmd)
+{
+	long	code;
+
+	code = cmd->shell->exit_status;
+	free_shell(cmd->shell);
+	exit((unsigned char)code);
+}
+
 void	ft_exit(t_cmd *cmd)
 {
 	long	code;
 	char	*arg;
+	int		i;
 
-	if (!cmd->args[1])
-	{
-		code = cmd->shell->exit_status;
-		free_shell(cmd->shell);
-		exit((unsigned char)code);
-	}
-	arg = cmd->args[1];
+	i = 1;
+	if (cmd->args[i] && ft_strcmp(cmd->args[i], "--") == 0)
+		i++;
+	if (!cmd->args[i])
+		exit_no_args(cmd);
+	arg = cmd->args[i];
 	if (!is_exit_numeric(arg))
 		exit_error(cmd, arg);
-	if (cmd->args[2])
+	if (cmd->args[i + 1])
 	{
 		ft_putendl_fd("minishell: exit: too many arguments", 2);
 		cmd->shell->exit_status = 1;

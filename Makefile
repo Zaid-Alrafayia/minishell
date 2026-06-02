@@ -7,6 +7,7 @@ NAME        = minishell
 PARSING_SRC = parsing/lexer_utils.c \
               parsing/lexer.c \
               parsing/syntax_check.c \
+              parsing/syntax_check_utils.c \
               parsing/env_init.c \
               parsing/free.c \
               parsing/cmd_builder.c \
@@ -17,21 +18,25 @@ PARSING_SRC = parsing/lexer_utils.c \
               parsing/parse_core.c \
               parsing/exec_mock.c \
               parsing/signals.c \
-              parsing/main.c
+              main.c
 
 EXECUTION_SRC = execution/builtin.c \
                 execution/builtin2.c \
                 execution/builtin3.c \
                 execution/builtin4.c \
+                execution/builtin5.c \
+                execution/builtin6.c \
                 execution/builtin_checkers.c \
                 execution/env_utils.c \
                 execution/fd_utils.c \
                 execution/env.c \
                 execution/exec.c \
+                execution/exec2.c \
                 execution/exec_utils.c \
                 execution/path.c \
                 execution/ft_echo.c \
-                execution/pipe.c
+                execution/pipe.c \
+                execution/pipe_utils.c
 
 UTILS         = utils/free.c \
                 utils/utils.c 

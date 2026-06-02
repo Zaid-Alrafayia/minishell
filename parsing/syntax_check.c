@@ -3,99 +3,72 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_check.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:49:13 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 09:32:51 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 12:35:00 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static bool	check_pipe_syntax(t_token *tokens)
+static bool	print_op_err(char *val)
 {
-	t_token	*curr;
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	if (!val)
+		ft_putstr_fd("newline", 2);
+	else
+		ft_putstr_fd(val, 2);
+	ft_putendl_fd("'", 2);
+	return (false);
+}
 
-	curr = tokens;
-	if (curr && curr->type == PIPE)
-		return (false);
-	while (curr)
+static bool	check_pipe_syntax(t_token *curr)
+{
+	if (!curr->next || curr->next->type == PIPE
+		|| curr->next->type == AND || curr->next->type == OR)
 	{
-		if (curr->type == PIPE)
+		if (!curr->next)
 		{
-			if (!curr->next || curr->next->type == PIPE)
-				return (false);
+			ft_putendl_fd("minishell: syntax error: unexpected end of file", 2);
+			return (false);
 		}
-		curr = curr->next;
+		return (print_op_err(curr->next->value));
 	}
 	return (true);
 }
 
-static bool	check_redir_syntax(t_token *tokens)
+static bool	check_redirection_syntax(t_token *curr)
+{
+	if (!curr->next)
+		return (print_op_err("newline"));
+	if (is_redirection(curr->next->type) || curr->next->type == PIPE
+		|| curr->next->type == AND || curr->next->type == OR)
+		return (print_op_err(curr->next->value));
+	return (true);
+}
+
+static bool	check_tokens_loop(t_token *tokens)
 {
 	t_token	*curr;
 
 	curr = tokens;
+	if (curr && (curr->type == PIPE || curr->type == AND || curr->type == OR))
+		return (print_op_err(curr->value));
 	while (curr)
 	{
+		if (curr->type == CMD && curr->quote_type == 0
+			&& ft_strcmp(curr->value, ";") == 0)
+			return (print_op_err(";"));
 		if (is_redirection(curr->type))
 		{
-			if (!curr->next)
-			{
-				ft_putendl_fd("minishell: syntax error near unexpected token"
-					" `newline'", 2);
+			if (!check_redirection_syntax(curr))
 				return (false);
-			}
-			if (is_redirection(curr->next->type) || curr->next->type == PIPE)
-			{
-				ft_putstr_fd("minishell: syntax error near unexpected token `",
-					2);
-				ft_putstr_fd(curr->next->value, 2);
-				ft_putendl_fd("'", 2);
-				return (false);
-			}
 		}
-		curr = curr->next;
-	}
-	return (true);
-}
-
-static bool	check_braces_error(char *value)
-{
-	if (ft_strcmp(value, "{") == 0)
-	{
-		ft_putendl_fd("minishell: syntax error: "
-			"unexpected end of file", 2);
-		return (false);
-	}
-	if (ft_strcmp(value, "}") == 0)
-	{
-		ft_putendl_fd("minishell: syntax error near "
-			"unexpected token `}'", 2);
-		return (false);
-	}
-	return (true);
-}
-
-static bool	check_braces(t_token *tokens)
-{
-	t_token	*curr;
-	bool	is_first;
-
-	curr = tokens;
-	is_first = true;
-	while (curr)
-	{
-		if (curr->type == PIPE)
-			is_first = true;
-		else if (curr->type == CMD && curr->quote_type == 0)
+		else if (curr->type == PIPE || curr->type == AND || curr->type == OR)
 		{
-			if (is_first)
-			{
-				if (!check_braces_error(curr->value))
-					return (false);
-				is_first = false;
-			}
+			if (!check_pipe_syntax(curr))
+				return (false);
 		}
 		curr = curr->next;
 	}
@@ -106,15 +79,8 @@ bool	check_syntax(t_token *tokens)
 {
 	if (!tokens)
 		return (false);
-	if (!check_pipe_syntax(tokens))
-	{
-		ft_putendl_fd("minishell: syntax error near unexpected token `|'", 2);
+	if (!check_tokens_loop(tokens))
 		return (false);
-	}
-	if (!check_redir_syntax(tokens))
-	{
-		return (false);
-	}
 	if (!check_braces(tokens))
 		return (false);
 	if (!check_unclosed_quotes(tokens))

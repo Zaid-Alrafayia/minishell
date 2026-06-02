@@ -19,7 +19,7 @@ void	built_in(t_cmd *cmd)
 	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
 		ft_cd(cmd);
 	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
-		ft_pwd();
+		ft_pwd(cmd->shell);
 	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
 		ft_export(cmd->shell, cmd);
 	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)

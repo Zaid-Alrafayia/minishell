@@ -43,11 +43,16 @@ t_env	*make_env_node(char *key, char *value)
 	return (node);
 }
 
-void	add_env_back(t_env *env, t_env *new_node)
+void	add_env_back(t_env **env, t_env *new_node)
 {
 	t_env	*curr;
 
-	curr = env;
+	if (!*env)
+	{
+		*env = new_node;
+		return ;
+	}
+	curr = *env;
 	while (curr->next)
 		curr = curr->next;
 	curr->next = new_node;
