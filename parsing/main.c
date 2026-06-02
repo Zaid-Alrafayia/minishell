@@ -6,13 +6,11 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:50:33 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 09:12:07 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 10:31:24 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	init_signals(void);
 
 void	init_shell(t_shell *shell, char **envp)
 {
@@ -71,6 +69,7 @@ int	main(int argc, char **argv, char **envp)
 		free(input);
 	}
 	free_shell(&shell);
-	write(1, "exit\n", 5);
+	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && isatty(STDERR_FILENO))
+		write(1, "exit\n", 5);
 	return (shell.exit_status);
 }

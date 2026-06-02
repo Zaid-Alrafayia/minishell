@@ -17,6 +17,8 @@ static char	*get_env_str(char *key, char *value)
 	char	*tmp;
 	char	*res;
 
+	if (!value)
+		value = "";
 	tmp = ft_strjoin(key, "=");
 	if (!tmp)
 		return (NULL);

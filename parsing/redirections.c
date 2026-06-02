@@ -59,6 +59,7 @@ void	handle_redirection(t_cmd *cmd, t_token **tok)
 {
 	t_token_type	type;
 	char			*file;
+	int				hd_fd;
 
 	type = (*tok)->type;
 	*tok = (*tok)->next;
@@ -67,9 +68,15 @@ void	handle_redirection(t_cmd *cmd, t_token **tok)
 	file = (*tok)->value;
 	if (type == HEREDOC)
 	{
-		if (cmd->infile != STDIN_FILENO && cmd->infile != -1)
-			close(cmd->infile);
-		cmd->infile = handle_heredoc(file);
+		hd_fd = handle_heredoc(file);
+		if (cmd->infile == -1)
+			close(hd_fd);
+		else
+		{
+			if (cmd->infile != STDIN_FILENO)
+				close(cmd->infile);
+			cmd->infile = hd_fd;
+		}
 	}
 	else
 		open_file(cmd, file, type);

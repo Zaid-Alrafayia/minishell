@@ -12,14 +12,6 @@
 
 #include "../minishell.h"
 
-static bool	is_redirection(t_token_type type)
-{
-	if (type == REDIRECT_IN || type == REDIRECT_OUT
-		|| type == TRUNCATE || type == APPEND || type == HEREDOC)
-		return (true);
-	return (false);
-}
-
 static bool	check_pipe_syntax(t_token *tokens)
 {
 	t_token	*curr;
@@ -68,6 +60,48 @@ static bool	check_redir_syntax(t_token *tokens)
 	return (true);
 }
 
+static bool	check_braces_error(char *value)
+{
+	if (ft_strcmp(value, "{") == 0)
+	{
+		ft_putendl_fd("minishell: syntax error: "
+			"unexpected end of file", 2);
+		return (false);
+	}
+	if (ft_strcmp(value, "}") == 0)
+	{
+		ft_putendl_fd("minishell: syntax error near "
+			"unexpected token `}'", 2);
+		return (false);
+	}
+	return (true);
+}
+
+static bool	check_braces(t_token *tokens)
+{
+	t_token	*curr;
+	bool	is_first;
+
+	curr = tokens;
+	is_first = true;
+	while (curr)
+	{
+		if (curr->type == PIPE)
+			is_first = true;
+		else if (curr->type == CMD && curr->quote_type == 0)
+		{
+			if (is_first)
+			{
+				if (!check_braces_error(curr->value))
+					return (false);
+				is_first = false;
+			}
+		}
+		curr = curr->next;
+	}
+	return (true);
+}
+
 bool	check_syntax(t_token *tokens)
 {
 	if (!tokens)
@@ -81,5 +115,9 @@ bool	check_syntax(t_token *tokens)
 	{
 		return (false);
 	}
+	if (!check_braces(tokens))
+		return (false);
+	if (!check_unclosed_quotes(tokens))
+		return (false);
 	return (true);
 }

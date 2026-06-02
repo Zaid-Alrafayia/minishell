@@ -68,7 +68,7 @@ t_token	*tokenize_input(char *in)
 	while (in[i])
 	{
 		i = skip_spaces(in, i);
-		if (!in[i])
+		if (!in[i] || in[i] == '#')
 			break ;
 		len = extract_operator(in, i, &toks);
 		if (len == 0)

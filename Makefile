@@ -1,5 +1,5 @@
 CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -I. -I42_libft -fsanitize=address -g3
+CFLAGS      = -Wall -Wextra -Werror -I. -I42_libft -fsanitize=address -O0 -g3
 RM          = rm -f
 
 NAME        = minishell
@@ -21,7 +21,10 @@ PARSING_SRC = parsing/lexer_utils.c \
 
 EXECUTION_SRC = execution/builtin.c \
                 execution/builtin2.c \
+                execution/builtin3.c \
+                execution/builtin4.c \
                 execution/builtin_checkers.c \
+                execution/env_utils.c \
                 execution/fd_utils.c \
                 execution/env.c \
                 execution/exec.c \

@@ -31,6 +31,7 @@ void	free_env_node(t_env *tmp)
 {
 	tmp->next = NULL;
 	free(tmp->key);
-	free(tmp->value);
+	if (tmp->value)
+		free(tmp->value);
 	free(tmp);
 }

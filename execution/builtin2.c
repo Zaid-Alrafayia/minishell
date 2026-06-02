@@ -6,76 +6,59 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/14 00:09:00 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/19 10:41:46 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/01 22:28:00 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_unset(t_shell *shell, t_cmd *cmd)
+static void	print_export(t_shell *shell)
 {
 	t_env	*curr;
-	t_env	*prev;
 
-	if (!cmd->args[1])
-		return ;
 	curr = shell->env;
-	prev = NULL;
 	while (curr)
 	{
-		if (ft_strcmp(curr->key, cmd->args[1]) == 0)
+		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd(curr->key, 1);
+		if (curr->value)
 		{
-			if (prev)
-				prev->next = curr->next;
-			else
-				shell->env = curr->next;
-			free_env_node(curr);
-			shell->env_edited = true;
-			return ;
+			ft_putstr_fd("=\"", 1);
+			ft_putstr_fd(curr->value, 1);
+			ft_putendl_fd("\"", 1);
 		}
-		prev = curr;
+		else
+			ft_putendl_fd("", 1);
 		curr = curr->next;
 	}
 }
 
-static t_env	*create_env_node(char *key, char *value)
+static int	export_invalid(t_cmd *cmd, int i, char *id_end)
 {
-	t_env	*node;
-
-	node = malloc(sizeof(t_env));
-	node->key = key;
-	node->value = value;
-	node->next = NULL;
-	return (node);
+	if (id_end)
+		*id_end = '=';
+	ft_putstr_fd("minishell: export: `", 2);
+	ft_putstr_fd(cmd->args[i], 2);
+	ft_putendl_fd("': not a valid identifier", 2);
+	cmd->shell->exit_status = 1;
+	return (1);
 }
 
-static void	add_env_back(t_env *env, t_env *new_node)
-{
-	t_env	*curr;
-
-	curr = env;
-	while (curr->next)
-	{
-		curr = curr->next;
-	}
-	curr->next = new_node;
-}
-
-void	ft_export(t_shell *shell, t_cmd *cmd)
+static void	export_one(t_shell *shell, char *arg)
 {
 	t_env	*node;
 	char	*eq;
 	char	*key;
 
-	if (!cmd->args[1])
+	eq = ft_strchr(arg, '=');
+	if (!eq)
 	{
-		ft_env(shell);
+		if (!get_env_by_key(shell->env, arg))
+			add_env_back(shell->env,
+				make_env_node(ft_strdup(arg), NULL));
 		return ;
 	}
-	eq = ft_strchr(cmd->args[1], '=');
-	if (!eq)
-		return ;
-	key = ft_substr(cmd->args[1], 0, eq - cmd->args[1]);
+	key = ft_substr(arg, 0, eq - arg);
 	node = get_env_by_key(shell->env, key);
 	if (node)
 	{
@@ -84,6 +67,43 @@ void	ft_export(t_shell *shell, t_cmd *cmd)
 		free(key);
 	}
 	else
-		add_env_back(shell->env, create_env_node(key, ft_strdup(eq + 1)));
+		add_env_back(shell->env, make_env_node(key, ft_strdup(eq + 1)));
 	shell->env_edited = true;
+}
+
+static void	process_export_arg(t_shell *shell, t_cmd *cmd, int *i)
+{
+	char	*eq;
+	char	*id_end;
+
+	eq = ft_strchr(cmd->args[*i], '=');
+	if (eq)
+	{
+		id_end = eq;
+		*id_end = '\0';
+		if (!is_valid_id(cmd->args[*i]))
+		{
+			export_invalid(cmd, (*i)++, id_end);
+			return ;
+		}
+		*id_end = '=';
+	}
+	else if (!is_valid_id(cmd->args[*i]))
+	{
+		export_invalid(cmd, (*i)++, NULL);
+		return ;
+	}
+	export_one(shell, cmd->args[*i]);
+	(*i)++;
+}
+
+void	ft_export(t_shell *shell, t_cmd *cmd)
+{
+	int	i;
+
+	if (!cmd->args[1])
+		return (print_export(shell));
+	i = 1;
+	while (cmd->args[i])
+		process_export_arg(shell, cmd, &i);
 }

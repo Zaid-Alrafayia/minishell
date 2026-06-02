@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:50:22 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/15 22:50:23 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 10:10:41 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ bool	parse_input(t_shell *shell, char *input)
 	if (!check_syntax(shell->tokens))
 	{
 		free_cycle(shell);
-		shell->exit_status = 258;
+		shell->exit_status = 2;
 		return (false);
 	}
 	expand_tokens(shell);

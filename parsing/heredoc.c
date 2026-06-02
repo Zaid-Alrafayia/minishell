@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 10:10:34 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/19 10:11:28 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 02:09:12 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@ static void	read_heredoc_lines(int fd, char *limiter)
 
 	while (1)
 	{
-		line = readline("> ");
+		if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)
+			&& isatty(STDERR_FILENO))
+			line = readline("> ");
+		else
+			line = readline(NULL);
 		if (!line)
 		{
 			write(2, "minishell: warning: delimited by EOF\n", 38);

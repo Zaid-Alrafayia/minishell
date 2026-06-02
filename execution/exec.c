@@ -3,24 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 22:09:29 by zaalrafa          #+#    #+#             */
-/*   Updated: 2026/05/23 09:31:28 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 01:33:33 by mhaizan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-static void	exec_builtin_child(t_shell *shell, t_cmd *cmd)
-{
-	if (check_built_in(cmd))
-	{
-		built_in(cmd);
-		free_shell(shell);
-		exit(shell->exit_status);
-	}
-}
 
 static void	exec_not_found(t_shell *shell, t_cmd *cmd)
 {
@@ -39,14 +29,28 @@ static void	exec_not_found(t_shell *shell, t_cmd *cmd)
 	}
 	write(2, "minishell: ", 11);
 	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
-	write(2, ": command not found\n", 21);
+	write(2, ": command not found\n", 20);
 	free_shell(shell);
 	exit(127);
 }
 
+static void	exec_dir_check(char *cmd_pt, t_cmd *cmd)
+{
+	struct stat	st;
+
+	if (stat(cmd_pt, &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		write(2, "minishell: ", 11);
+		write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+		write(2, ": Is a directory\n", 17);
+	}
+	else
+		perror(cmd->args[0]);
+}
+
 void	child_process(t_shell *shell, t_cmd *cmd)
 {
-	char	*cmd_pt;
+	char		*cmd_pt;
 
 	exec_signals();
 	if (!apply_redirs(cmd))
@@ -64,7 +68,7 @@ void	child_process(t_shell *shell, t_cmd *cmd)
 	if (!cmd_pt)
 		exec_not_found(shell, cmd);
 	execve(cmd_pt, cmd->args, shell->env_array);
-	perror(cmd->args[0]);
+	exec_dir_check(cmd_pt, cmd);
 	free(cmd_pt);
 	free_shell(shell);
 	exit(126);

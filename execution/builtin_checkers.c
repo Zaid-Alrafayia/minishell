@@ -27,11 +27,13 @@ void	built_in(t_cmd *cmd)
 	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		ft_env(cmd->shell);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		ft_exit(cmd->shell);
+		ft_exit(cmd);
 }
 
 int	check_built_in(t_cmd *cmd)
 {
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (0);
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (1);
 	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)

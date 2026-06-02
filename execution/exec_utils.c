@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/23 12:05:00 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 09:32:48 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/06/02 00:52:56 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	set_exit_status(t_shell *shell, int status)
 
 void	exec_single_builtin(t_shell *shell, t_cmd *cmd)
 {
+	cmd->shell = shell;
 	shell->exit_status = 0;
 	if (!apply_redirs(cmd))
 		shell->exit_status = 1;
@@ -55,4 +56,15 @@ void	exec_empty_cmd(t_shell *shell, t_cmd *cmd)
 		shell->exit_status = 1;
 	restore_stdio(shell);
 	close_cmd_fds(cmd);
+}
+
+void	exec_builtin_child(t_shell *shell, t_cmd *cmd)
+{
+	if (check_built_in(cmd))
+	{
+		cmd->shell = shell;
+		built_in(cmd);
+		free_shell(shell);
+		exit(shell->exit_status);
+	}
 }

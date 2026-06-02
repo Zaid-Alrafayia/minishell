@@ -6,7 +6,7 @@
 /*   By: mohammad-hezan <mohammad-hezan@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 10:15:06 by mohammad-he       #+#    #+#             */
-/*   Updated: 2026/05/23 09:35:54 by mohammad-he      ###   ########.fr       */
+/*   Updated: 2026/05/23 10:10:43 by mohammad-he      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
 
 extern int	g_sig_status;
 
@@ -47,9 +48,13 @@ char	**rebuild_env(t_shell *shell);
 bool	change_env_value(t_env *env, char *key, char *value);
 char	*get_env_value(t_env *env, char *key);
 t_env	*get_env_by_key(t_env *env, char *key);
+t_env	*make_env_node(char *key, char *value);
+void	add_env_back(t_env *env, t_env *new_node);
+int		is_valid_id(char *s);
 void	child_process(t_shell *shell, t_cmd *cmd);
 void	exec_external(t_shell *shell);
 void	exec_pipe(t_shell *shell);
+void	exec_builtin_child(t_shell *shell, t_cmd *cmd);
 void	exec(t_shell *shell);
 void	exec_single_builtin(t_shell *shell, t_cmd *cmd);
 void	exec_empty_cmd(t_shell *shell, t_cmd *cmd);
@@ -58,7 +63,7 @@ void	exec_empty_cmd(t_shell *shell, t_cmd *cmd);
 void	ft_env(t_shell *shell);
 void	ft_unset(t_shell *shell, t_cmd *cmd);
 void	ft_export(t_shell *shell, t_cmd *cmd);
-void	ft_exit(t_shell *shell);
+void	ft_exit(t_cmd *cmd);
 void	ft_pwd(void);
 void	ft_cd(t_cmd *cmd);
 void	ft_echo(t_cmd *cmd);
@@ -67,6 +72,8 @@ void	ft_echo(t_cmd *cmd);
 
 t_token	*create_tok(char *value, t_token_type type, int quote);
 int		add_token(t_token **tokens, t_token *new_node);
+bool	is_redirection(t_token_type type);
+bool	check_unclosed_quotes(t_token *tokens);
 t_token	*tokenize_input(char *in);
 
 bool	check_syntax(t_token *tokens);
